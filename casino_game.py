@@ -118,8 +118,91 @@ class DiceCasinoGUI:
         )
         self.result_label.pack(pady=10)
     
+    def get_bet_amount(self):
+        try:
+            bet = int(self.bet_var.get())
+            if bet < 5:
+                messagebox.showwarning("Invalid Bet", "Minimum bet is $5!")
+                return None
+            if bet > self.balance:
+                messagebox.showwarning("Insufficient Funds", "You don't have enough balance!")
+                return None
+            return bet
+        except ValueError:
+            messagebox.showerror("Invalid Bet", "Please enter a valid bet amount!")
+            return None
+    
     def roll_dice(self):
         return random.randint(1, 6), random.randint(1, 6)
+    
+    def update_dice_display(self, dice1, dice2):
+        # Unicode dice characters
+        dice_chars = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']
+        
+        # Animate dice roll
+        for i in range(8):
+            temp1 = random.randint(1, 6)
+            temp2 = random.randint(1, 6)
+            self.dice_label1.config(text=dice_chars[temp1-1])
+            self.dice_label2.config(text=dice_chars[temp2-1])
+            self.root.update()
+            time.sleep(0.1)
+        
+        # Show final result
+        self.dice_label1.config(text=dice_chars[dice1-1])
+        self.dice_label2.config(text=dice_chars[dice2-1])
+        total = dice1 + dice2
+        self.dice_total_label.config(text=f"Total: {total}")
+        
+        return total
+    
+    def update_display(self):
+        self.balance_label.config(text=f"💰 BALANCE: ${self.balance}")
+        self.update_buttons_state()
+        
+        # Check if game over
+        if self.balance <= 0:
+            messagebox.showinfo("Game Over", "You've run out of money! Game reset.")
+            self.reset_game()
+    
+    def update_buttons_state(self):
+        # Enable/disable buttons based on balance
+        state = 'normal' if self.balance >= 5 else 'disabled'
+        if hasattr(self, 'high_roller_btn'):
+            self.high_roller_btn.config(state=state)
+        if hasattr(self, 'lucky7_btn'):
+            self.lucky7_btn.config(state=state)
+        if hasattr(self, 'double_btn'):
+            self.double_btn.config(state=state)
+    
+    def disable_buttons(self):
+        if hasattr(self, 'high_roller_btn'):
+            self.high_roller_btn.config(state='disabled')
+        if hasattr(self, 'lucky7_btn'):
+            self.lucky7_btn.config(state='disabled')
+        if hasattr(self, 'double_btn'):
+            self.double_btn.config(state='disabled')
+    
+    def enable_buttons(self):
+        if self.balance >= 5:
+            if hasattr(self, 'high_roller_btn'):
+                self.high_roller_btn.config(state='normal')
+            if hasattr(self, 'lucky7_btn'):
+                self.lucky7_btn.config(state='normal')
+            if hasattr(self, 'double_btn'):
+                self.double_btn.config(state='normal')
+    
+    def reset_game(self):
+        self.balance = 100
+        self.bet_var.set("10")
+        self.dice_label1.config(text="⚀")
+        self.dice_label2.config(text="⚀")
+        self.dice_total_label.config(text="Total: 0")
+        self.result_label.config(
+            text="Place your bet and choose a game!", 
+            fg='#ECF0F1'
+        )
+        self.update_display()
 
 if __name__ == "__main__":
     root = tk.Tk()
