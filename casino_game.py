@@ -157,6 +157,44 @@ class DiceCasinoGUI:
         )
         self.result_label.pack(pady=10)
         
+        # History area
+        history_frame = tk.Frame(self.root, bg='#34495E', relief='sunken', bd=2)
+        history_frame.pack(pady=10, padx=20, fill='both', expand=True)
+        
+        tk.Label(
+            history_frame,
+            text="📊 GAME HISTORY",
+            font=('Arial', 14, 'bold'),
+            fg='#F1C40F',
+            bg='#34495E'
+        ).pack(pady=5)
+        
+        # History listbox with scrollbar
+        history_scroll = tk.Scrollbar(history_frame)
+        history_scroll.pack(side='right', fill='y')
+        
+        self.history_listbox = tk.Listbox(
+            history_frame,
+            yscrollcommand=history_scroll.set,
+            font=('Arial', 10),
+            bg='#2C3E50',
+            fg='#ECF0F1',
+            height=6
+        )
+        self.history_listbox.pack(fill='both', expand=True, padx=5, pady=5)
+        history_scroll.config(command=self.history_listbox.yview)
+        
+        # Reset button
+        reset_btn = tk.Button(
+            self.root,
+            text="🔄 RESET GAME",
+            font=('Arial', 12, 'bold'),
+            bg='#E67E22',
+            fg='white',
+            command=self.reset_game
+        )
+        reset_btn.pack(pady=10)
+        
         self.update_buttons_state()
     
     def get_bet_amount(self):
@@ -232,6 +270,7 @@ class DiceCasinoGUI:
         
         self.result_label.config(text=result, fg=color)
         self.update_display()
+        self.add_to_history("High Roller", bet, result)
         self.enable_buttons()
     
     def play_lucky7(self):
@@ -257,6 +296,7 @@ class DiceCasinoGUI:
         
         self.result_label.config(text=result, fg=color)
         self.update_display()
+        self.add_to_history("Lucky 7", bet, result)
         self.enable_buttons()
     
     def play_double_trouble(self):
@@ -282,7 +322,18 @@ class DiceCasinoGUI:
         
         self.result_label.config(text=result, fg=color)
         self.update_display()
+        self.add_to_history("Double Trouble", bet, result)
         self.enable_buttons()
+    
+    def add_to_history(self, game_type, bet, result):
+        # Extract just the first line for history
+        short_result = result.split('\n')[0]
+        history_entry = f"{game_type}: ${bet} - {short_result}"
+        self.history_listbox.insert(0, history_entry)
+        
+        # Keep only last 10 entries
+        if self.history_listbox.size() > 10:
+            self.history_listbox.delete(10)
     
     def update_display(self):
         self.balance_label.config(text=f"💰 BALANCE: ${self.balance}")
@@ -321,6 +372,7 @@ class DiceCasinoGUI:
             text="Place your bet and choose a game!", 
             fg='#ECF0F1'
         )
+        self.history_listbox.delete(0, 'end')
         self.update_display()
 
 if __name__ == "__main__":
