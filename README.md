@@ -22,16 +22,13 @@ A Python-based casino dice game with a graphical user interface built using Tkin
 - **Random** for dice generation
 - **Git** for version control
 
-**python-casino-game/**
-├── casino_game.py    # Main game file
-└── README.md         # This file
 
 ##  🎯 How to Play
 1. Set your bet amount (minimum $5)
 2. Choose a game mode:
-   High Roller: Roll higher than the dealer
-   Lucky 7: Roll exactly 7
-   Double Trouble: Roll matching dice
+High Roller: Roll higher than the dealer
+Lucky 7: Roll exactly 7
+Double Trouble: Roll matching dice
 
-3. Watch the dice animation
-4. See if you win and track your balance!
+4. Watch the dice animation
+5. See if you win and track your balance!
